@@ -1,0 +1,6 @@
+# Ce fichier stocke les constantes relatives au jeu de données,
+# comme les noms des colonnes dans le DataFrame.
+
+data_columns:
+  sar: "sar_path"
+  opt: "opt_path"

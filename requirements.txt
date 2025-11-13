@@ -10,3 +10,4 @@ jupyter
 pandas
 numpy
 matplotlib
+pillow
