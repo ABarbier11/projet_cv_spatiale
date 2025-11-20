@@ -1,6 +1,22 @@
 # Ce fichier stocke les constantes relatives au jeu de données,
 # comme les noms des colonnes dans le DataFrame.
 
-data_columns:
+dataset:
+  # Le dossier racine contenant les sous-dossiers de classes
+  root_dir: "data"
+
+  # Les classes disponibles (noms des dossiers)
+  available_categories:
+    - "agri"
+    - "barrenland"
+    - "grassland"
+    - "urban"
+  
+  # Noms des sous-dossiers standards
+  s1_folder: "s1"
+  s2_folder: "s2"
+
+columns:
   sar: "sar_path"
   opt: "opt_path"
+  category: "category_label"
