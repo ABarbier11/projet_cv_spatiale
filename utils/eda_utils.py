@@ -49,7 +49,7 @@ def plot_dataset_histograms(df_pairs: pd.DataFrame, config_dataset: Dict[str, An
     print(f"Analyse de la distribution sur {sample_size} paires aléatoires...")
     
     sar_col = config_dataset['columns']['sar']
-    opt_col = config_dataset['columns']['optical']
+    opt_col = config_dataset['columns']['opt']
 
     sar_pixels = []
     opt_r_pixels = []
