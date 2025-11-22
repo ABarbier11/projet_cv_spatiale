@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from typing import Tuple, Dict, Any
 from tqdm import tqdm
+from pathlib import Path
 
 
 def show_image_pair(sar_path: str, opt_path: str) -> None:
@@ -33,8 +34,8 @@ def sample_random_pairs(df_pairs: pd.DataFrame, config_dataset: Dict[str, Any]) 
     Prend le DataFrame des pairs (et la config des noms de colonnes) et renvoie le tuple d'une paire au hasard
     """
 
-    sar_col = config_dataset['data_columns']['sar']
-    opt_col = config_dataset['data_columns']['opt']
+    sar_col = config_dataset['columns']['sar']
+    opt_col = config_dataset['columns']['opt']
 
     sample = df_pairs.sample(1).iloc[0]
     return sample[sar_col], sample[opt_col]
@@ -104,5 +105,64 @@ def plot_dataset_histograms(df_pairs: pd.DataFrame, config_dataset: Dict[str, An
     ax2.legend()
     
     plt.suptitle("Analyse de la Distribution des Pixels (sur l'échantillon)", fontsize=16)
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_image_gallery(
+    df_pairs: pd.DataFrame, 
+    config: Dict[str, Any], 
+    n_rows: int = 3, 
+    n_cols: int = 3,
+    seed: int = None
+) -> None:
+    """
+    Affiche une galerie d'images (SAR à gauche, Optique à droite) pour vérifier 
+    visuellement la diversité, les nuages, et la cohérence des saisons.
+    
+    Args:
+        df_pairs: Le DataFrame contenant les chemins.
+        config: La configuration pour les noms de colonnes.
+        n_rows: Nombre de lignes de la grille.
+        n_cols: Nombre de PAIRES par ligne.
+        seed: Pour reproduire le même échantillon (optionnel).
+    """
+    n_pairs = n_rows * n_cols
+
+    sample = df_pairs.sample(n=n_pairs, random_state=seed)
+    
+    sar_col = config['columns']['sar']
+    opt_col = config['columns']['opt']
+
+    # On multiplie n_cols par 2 car chaque "item" est une paire (SAR + Opt)
+    fig, axes = plt.subplots(n_rows, n_cols * 2, figsize=(n_cols * 5, n_rows * 2.5))
+    
+    fig.suptitle(f"Galerie Diversité : SAR (Gauche) vs Optique (Droite) - n={n_pairs}", fontsize=16, y=0.98)
+    axes = axes.flatten()
+    
+    for idx, (i, row) in enumerate(sample.iterrows()):
+        # idx * 2 = l'emplacement SAR
+        # idx * 2 + 1 = l'emplacement Optique
+        ax_sar = axes[idx * 2]
+        ax_opt = axes[idx * 2 + 1]
+        
+        sar_path = row[sar_col]
+        opt_path = row[opt_col]
+        
+        sar_img = Image.open(sar_path)
+        opt_img = Image.open(opt_path)
+        
+        # Affichage SAR
+        ax_sar.imshow(sar_img, cmap='gray')
+        ax_sar.axis('off')
+        short_name = Path(sar_path).name[:15] + "..."
+        ax_sar.set_title(f"SAR\n{short_name}", fontsize=8, color='#333333')
+        
+        # Affichage OPT
+        ax_opt.imshow(opt_img)
+        ax_opt.axis('off')
+        ax_opt.set_title("OPT", fontsize=8, color='#333333')
+            
+
     plt.tight_layout()
     plt.show()
